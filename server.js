@@ -6,7 +6,8 @@ var app=express();
 var bodyparser=require('body-parser');
 //For selecting port for local or heroku
 var PORT=process.env.PORT || 3000;
-
+//Underscore 
+var _=require('underscore');
 var todos=[];
 var todos_id=1;
 
@@ -34,14 +35,9 @@ app.get("/todos",function(req,res){
 app.get("/todos/:id",function(req,res)
 {
 	var todos_id=parseInt(req.params.id);
-	var todo_found;
-	todos.forEach(function(todo)
-		{
-			if(todo.id===todos_id)
-			{
-				todo_found=todo;
-			}
-		});
+	var todo_found=_.findWhere(todos,{id:todos_id});
+	
+
 	if(todo_found)
 	{
 		res.json(todo_found);
@@ -53,9 +49,12 @@ app.get("/todos/:id",function(req,res)
 
 });
 
-//Post 
+//Post /todos
 app.post("/todos",function(req,res){
-var body=req.body;
+var body=_.pick(req.body,'completed','description');
+if(!_.isBoolean(body.completed || !_.isString(body.description) || body.description.trim().length===0))
+{res.status(400).send()}
+body.description=body.description.trim();
 body.id=todos_id;
 todos.push(body);
 todos_id=todos_id+1;

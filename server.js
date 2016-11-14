@@ -61,6 +61,20 @@ todos_id=todos_id+1;
 res.json(body);
 });
 
+//Delete /todos/:id
+app.delete("/todos/:id",function(req,res)
+{
+var todos_id=parseInt(req.params.id);
+var matched=_.findWhere(todos,{id:todos_id});
+if(!matched)
+{
+	return res.status(400).send();
+}
+else{
+	todos=_.without(todos,matched);
+res.json(matched);
+}
+});
 app.listen(PORT,function(){
 	console.log("Listening on port"+PORT);
 });

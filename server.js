@@ -75,6 +75,37 @@ else{
 res.json(matched);
 }
 });
+
+//Put /todos/:id
+app.put("/todos/:id",function(req,res){
+	var todos_id=parseInt(req.params.id);
+	var matched=_.findWhere(todos,{id:todos_id});
+if(!matched)
+{
+	return res.status(400).send();
+}
+var body=_.pick(req.body,"completed","description");
+var newtodo={};
+if(body.hasOwnProperty('description') && body.description.trim().length >0 && _.isString(body.description))
+{
+newtodo.description=body.description;
+}
+else if(body.hasOwnProperty('description'))
+{
+	return res.status(400).send();
+}
+
+if(body.hasOwnProperty('completed') && _.isBoolean(body.completed))
+{
+	newtodo.completed=body.completed;
+}
+else if(body.hasOwnProperty('completed'))
+{
+	return res.status(400).send();
+}
+_.extend(matched,newtodo);
+res.json(matched);
+});
 app.listen(PORT,function(){
 	console.log("Listening on port"+PORT);
 });

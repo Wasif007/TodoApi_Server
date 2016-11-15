@@ -27,7 +27,17 @@ app.get('/about',function(req,res)
 
 //Get /todos
 app.get("/todos",function(req,res){
-	res.json(todos);
+	var query_paramss=req.query;
+	var newArray=todos;
+	if(query_paramss.hasOwnProperty('completed') && query_paramss.completed==='true')
+	{
+		newArray=_.where(newArray,{completed:true});
+	}
+else if(query_paramss.hasOwnProperty('completed') && query_paramss.completed==='false')
+	{
+		newArray=_.where(newArray,{completed:false});
+	}
+	res.json(newArray);
 
 });
 

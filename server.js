@@ -37,6 +37,14 @@ else if(query_paramss.hasOwnProperty('completed') && query_paramss.completed==='
 	{
 		newArray=_.where(newArray,{completed:false});
 	}
+
+	if(query_paramss.hasOwnProperty('q') && query_paramss.q.length > 0)
+	{
+		newArray=_.filter(newArray,function(todo)
+		{
+return todo.description.toLowerCase().indexOf(query_paramss.q) > -1;
+		});
+	}
 	res.json(newArray);
 
 });

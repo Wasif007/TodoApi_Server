@@ -8,6 +8,8 @@ var bodyparser=require('body-parser');
 var PORT=process.env.PORT || 3000;
 //Underscore 
 var _=require('underscore');
+//Getting all db data
+var db=require('./db.js');
 var todos=[];
 var todos_id=1;
 
@@ -70,14 +72,22 @@ app.get("/todos/:id",function(req,res)
 //Post /todos
 app.post("/todos",function(req,res){
 var body=_.pick(req.body,'completed','description');
-if(!_.isBoolean(body.completed || !_.isString(body.description) || body.description.trim().length===0))
+
+db.todo.create(body).then(function(todo)
+{
+res.send(todo.toJSON());
+},function(e)
+{
+res.status(401).send();
+});
+/*if(!_.isBoolean(body.completed || !_.isString(body.description) || body.description.trim().length===0))
 {res.status(400).send()}
 body.description=body.description.trim();
 body.id=todos_id;
 todos.push(body);
 todos_id=todos_id+1;
 res.json(body);
-});
+*/});
 
 //Delete /todos/:id
 app.delete("/todos/:id",function(req,res)
@@ -124,6 +134,10 @@ else if(body.hasOwnProperty('completed'))
 _.extend(matched,newtodo);
 res.json(matched);
 });
+
+db.sequelize.sync().then(function()
+{
 app.listen(PORT,function(){
 	console.log("Listening on port"+PORT);
+});
 });

@@ -55,7 +55,21 @@ return todo.description.toLowerCase().indexOf(query_paramss.q) > -1;
 app.get("/todos/:id",function(req,res)
 {
 	var todos_id=parseInt(req.params.id);
-	var todo_found=_.findWhere(todos,{id:todos_id});
+	
+	db.todo.findById(todos_id).then(function(todo)
+	{
+if(!!todo)
+{
+	return res.send(todo.toJSON());
+}
+else{
+return res.status(404).send();
+}
+	},function(e)
+	{
+res.status(500).send();
+	});
+	/*var todo_found=_.findWhere(todos,{id:todos_id});
 	
 
 	if(todo_found)
@@ -66,6 +80,7 @@ app.get("/todos/:id",function(req,res)
 	{
 		res.status(400).send();
 	}
+	*/
 
 });
 
@@ -78,7 +93,7 @@ db.todo.create(body).then(function(todo)
 res.send(todo.toJSON());
 },function(e)
 {
-res.status(401).send();
+res.status(500).send();
 });
 /*if(!_.isBoolean(body.completed || !_.isString(body.description) || body.description.trim().length===0))
 {res.status(400).send()}
@@ -135,7 +150,7 @@ _.extend(matched,newtodo);
 res.json(matched);
 });
 
-db.sequelize.sync().then(function()
+db.sequelize.sync({force:true}).then(function()
 {
 app.listen(PORT,function(){
 	console.log("Listening on port"+PORT);

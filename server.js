@@ -128,7 +128,22 @@ res.json(body);
 app.delete("/todos/:id",function(req,res)
 {
 var todos_id=parseInt(req.params.id);
-var matched=_.findWhere(todos,{id:todos_id});
+db.todo.destroy({
+	where:{
+		id:todos_id
+	}
+}).then(function(rows){
+	if(rows===0)
+	{
+		res.status(401).send();
+	}
+	else{
+		res.status(204).send();
+	}
+},function(e){
+	res.status(500).send();
+});
+/*var matched=_.findWhere(todos,{id:todos_id});
 if(!matched)
 {
 	return res.status(400).send();
@@ -137,6 +152,7 @@ else{
 	todos=_.without(todos,matched);
 res.json(matched);
 }
+*/
 });
 
 //Put /todos/:id

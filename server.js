@@ -159,6 +159,35 @@ res.json(matched);
 app.put("/todos/:id",function(req,res){
 	var todos_id=parseInt(req.params.id);
 	var matched=_.findWhere(todos,{id:todos_id});
+	var attributes={};
+	var body=_.pick(req.body,"completed","description");
+
+if(body.hasOwnProperty('description') )
+{
+attributes.description=body.description;
+}	
+if(body.hasOwnProperty('completed'))
+{
+	attributes.completed=body.completed;
+}
+
+db.todo.findById(todos_id).then(function(todo){
+if(todo)
+{
+todo.update(attributes).then(function(todo){
+	return res.send(todo.toJSON());
+},function(e){
+	return res.status(400).send();
+});
+}
+else{
+	res.status(404).send();
+}
+},function(e){
+	res.status(500).send();
+});
+	/*
+d
 if(!matched)
 {
 	return res.status(400).send();
@@ -184,6 +213,7 @@ else if(body.hasOwnProperty('completed'))
 }
 _.extend(matched,newtodo);
 res.json(matched);
+*/
 });
 
 db.sequelize.sync({force:true}).then(function()

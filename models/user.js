@@ -16,5 +16,15 @@ validate:{
 	len:[7,15]
 }
 }
+},{
+	hooks:{
+		beforeValidate:function(users,option)
+		{
+			if(typeof users.email==='string')
+			{
+				users.email=users.email.toLowerCase();
+			}
+		}
+	}
 });
 };

@@ -12,6 +12,8 @@ var _=require('underscore');
 var db=require('./db.js');
 //Bcrypt
 var bcrypt=require('bcrypt');
+//Auth MiddleWare
+var middle=require('./middlewares.js')(db);
 var todos=[];
 var todos_id=1;
 
@@ -30,7 +32,7 @@ app.get('/about',function(req,res)
 })
 
 //Get /todos
-app.get("/todos",function(req,res){
+app.get("/todos",middle.requireAuthentication,function(req,res){
 	var query_paramss=req.query;
 	var newArray=todos;
 	var where={};
@@ -74,7 +76,7 @@ return todo.description.toLowerCase().indexOf(query_paramss.q) > -1;
 });
 
 //Get /todos/:id
-app.get("/todos/:id",function(req,res)
+app.get("/todos/:id",middle.requireAuthentication,function(req,res)
 {
 	var todos_id=parseInt(req.params.id);
 	
@@ -107,7 +109,7 @@ res.status(500).send();
 });
 
 //Post /todos
-app.post("/todos",function(req,res){
+app.post("/todos",middle.requireAuthentication,function(req,res){
 var body=_.pick(req.body,'completed','description');
 
 db.todo.create(body).then(function(todo)
@@ -127,7 +129,7 @@ res.json(body);
 */});
 
 //Delete /todos/:id
-app.delete("/todos/:id",function(req,res)
+app.delete("/todos/:id",middle.requireAuthentication,function(req,res)
 {
 var todos_id=parseInt(req.params.id);
 db.todo.destroy({
@@ -158,7 +160,7 @@ res.json(matched);
 });
 
 //Put /todos/:id
-app.put("/todos/:id",function(req,res){
+app.put("/todos/:id",middle.requireAuthentication,function(req,res){
 	var todos_id=parseInt(req.params.id);
 	var matched=_.findWhere(todos,{id:todos_id});
 	var attributes={};

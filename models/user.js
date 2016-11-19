@@ -68,6 +68,37 @@ set:function(value)
 		}
 	},
 	classMethods:{
+		findByToken:function(token){
+			return new Promise(function(response,reject){
+				
+				try{var tokengetting=jwt.verify(token,"xyz");
+				var bytes=cryptojs.AES.decrypt(tokengetting.token,"abc");
+				var dataObtained=JSON.parse(bytes.toString(cryptojs.enc.Utf8));
+
+				user.findById(dataObtained.id).then(function(user){
+					if(user)
+					{
+						response(user);
+					}
+					else{
+						console.log("Hello first");
+						reject();
+					}
+				},function(){
+
+						console.log("Hello first");
+					reject();
+				});
+			}
+			catch(e)
+			{
+
+						console.log("Hello first");
+				reject();
+			}
+
+});
+		},
 		Authenticate:function(body)
 		{
 			return new Promise(function(response,reject){

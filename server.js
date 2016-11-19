@@ -10,6 +10,8 @@ var PORT=process.env.PORT || 3000;
 var _=require('underscore');
 //Getting all db data
 var db=require('./db.js');
+//Bcrypt
+var bcrypt=require('bcrypt');
 var todos=[];
 var todos_id=1;
 
@@ -235,9 +237,9 @@ db.user.findOne({
 	{
 	email:body.email}
 }).then(function(user){
-	if(!user)
+	if(!user || !bcrypt.compareSync(body.password,user.get('hashed_password')))
 	{
-		res.status(404).send();
+	return	res.status(404).send();
 	}
 	res.send(user.toPublicJson());
 },function(e){

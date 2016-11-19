@@ -1,4 +1,5 @@
 var bcrypt=require('bcrypt');
+var _=require('underscore');
 module.exports=function(sequelize,DataTypes)
 {
 	return  sequelize.define("users",{
@@ -37,6 +38,13 @@ set:function(value)
 			{
 				users.email=users.email.toLowerCase();
 			}
+		}
+	},
+	instanceMethods:{
+		toPublicJson:function()
+		{
+			var json=this.toJSON();
+			return _.pick(json,"id","email","createdAt","updatedAt");
 		}
 	}
 });

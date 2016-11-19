@@ -216,7 +216,7 @@ res.json(matched);
 */
 });
 
-//Post /user
+//Post /users
 app.post("/users",function(req,res){
 	var body=_.pick(req.body,'email','password');
 	db.user.create(body).then(function(user){
@@ -224,6 +224,25 @@ app.post("/users",function(req,res){
 	},function(e){
 		res.status(400).json(e);
 	});
+});
+
+//Post /user/login
+app.post("/user/login",function(req,res)
+{
+var body=_.pick(req.body,"email","password");
+db.user.findOne({
+	where:
+	{
+	email:body.email}
+}).then(function(user){
+	if(!user)
+	{
+		res.status(404).send();
+	}
+	res.send(user.toPublicJson());
+},function(e){
+	res.status(500).send();
+})
 });
 db.sequelize.sync({force:true}).then(function()
 {

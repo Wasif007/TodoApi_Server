@@ -232,6 +232,10 @@ app.post("/users",function(req,res){
 app.post("/user/login",function(req,res)
 {
 var body=_.pick(req.body,"email","password");
+if(typeof body.email!=='string' || typeof body.password!=='string')
+{
+	return res.status(401).send();
+}
 db.user.findOne({
 	where:
 	{

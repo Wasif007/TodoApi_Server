@@ -232,24 +232,13 @@ app.post("/users",function(req,res){
 app.post("/user/login",function(req,res)
 {
 var body=_.pick(req.body,"email","password");
-if(typeof body.email!=='string' || typeof body.password!=='string')
-{
-	return res.status(401).send();
-}
-db.user.findOne({
-	where:
-	{
-	email:body.email}
-}).then(function(user){
-	if(!user || !bcrypt.compareSync(body.password,user.get('hashed_password')))
-	{
-	return	res.status(404).send();
-	}
+db.user.Authenticate(body).then(function(user){
 	res.send(user.toPublicJson());
 },function(e){
-	res.status(500).send();
-})
+	res.status(401).send();
 });
+});
+
 db.sequelize.sync({force:true}).then(function()
 {
 app.listen(PORT,function(){

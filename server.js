@@ -233,7 +233,14 @@ app.post("/user/login",function(req,res)
 {
 var body=_.pick(req.body,"email","password");
 db.user.Authenticate(body).then(function(user){
-	res.send(user.toPublicJson());
+	var token=user.generateToken('Authentication');
+if(token)
+{
+	res.header('Auth',token).send(user.toJSON());
+}
+else{
+	res.status(401).send();
+}
 },function(e){
 	res.status(401).send();
 });

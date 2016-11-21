@@ -144,7 +144,8 @@ app.delete("/todos/:id",middle.requireAuthentication,function(req,res)
 var todos_id=parseInt(req.params.id);
 db.todo.destroy({
 	where:{
-		id:todos_id
+		id:todos_id,
+		userId:req.user.get('id')
 	}
 }).then(function(rows){
 	if(rows===0)
@@ -175,7 +176,10 @@ app.put("/todos/:id",middle.requireAuthentication,function(req,res){
 	var matched=_.findWhere(todos,{id:todos_id});
 	var attributes={};
 	var body=_.pick(req.body,"completed","description");
-
+	var where={
+		id:todos_id,
+		userId:req.user.get('id')
+	}
 if(body.hasOwnProperty('description') )
 {
 attributes.description=body.description;
@@ -185,7 +189,7 @@ if(body.hasOwnProperty('completed'))
 	attributes.completed=body.completed;
 }
 
-db.todo.findById(todos_id).then(function(todo){
+db.todo.findOne({where:where}).then(function(todo){
 if(todo)
 {
 todo.update(attributes).then(function(todo){

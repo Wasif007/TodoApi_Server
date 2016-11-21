@@ -81,8 +81,11 @@ return todo.description.toLowerCase().indexOf(query_paramss.q) > -1;
 app.get("/todos/:id",middle.requireAuthentication,function(req,res)
 {
 	var todos_id=parseInt(req.params.id);
-	
-	db.todo.findById(todos_id).then(function(todo)
+	var where={
+		id:todos_id,
+		userId:req.user.get('id')
+	}
+	db.todo.findOne({where:where}).then(function(todo)
 	{
 if(!!todo)
 {

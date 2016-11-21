@@ -81,19 +81,16 @@ set:function(value)
 						response(user);
 					}
 					else{
-						console.log("Hello first");
 						reject();
 					}
 				},function(){
 
-						console.log("Hello first");
 					reject();
 				});
 			}
 			catch(e)
 			{
 
-						console.log("Hello first");
 				reject();
 			}
 

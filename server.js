@@ -114,7 +114,12 @@ var body=_.pick(req.body,'completed','description');
 
 db.todo.create(body).then(function(todo)
 {
-res.send(todo.toJSON());
+//res.send(todo.toJSON());
+req.user.addTodo(todo).then(function(){
+return todo.reload();
+}).then(function(todo){
+	res.send(todo.toJSON());
+});
 },function(e)
 {
 res.status(500).send();
@@ -238,7 +243,7 @@ db.user.Authenticate(body).then(function(user){
 	var token=user.generateToken('Authentication');
 if(token)
 {
-	res.header('Auth',token).send(user.toJSON());
+	res.header('Auth',token).send(user.toPublicJson());
 }
 else{
 	res.status(401).send();

@@ -35,7 +35,9 @@ app.get('/about',function(req,res)
 app.get("/todos",middle.requireAuthentication,function(req,res){
 	var query_paramss=req.query;
 	var newArray=todos;
-	var where={};
+	var where={
+		userId:req.user.get('id')
+	};
 	if(query_paramss.hasOwnProperty('completed') && query_paramss.completed==="true")
 	{
 		where.completed=true;

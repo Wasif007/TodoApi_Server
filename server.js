@@ -248,16 +248,23 @@ app.post("/users",function(req,res){
 app.post("/user/login",function(req,res)
 {
 var body=_.pick(req.body,"email","password");
+var userInstance;
 db.user.Authenticate(body).then(function(user){
 	var token=user.generateToken('Authentication');
-if(token)
-{
-	res.header('Auth',token).send(user.toPublicJson());
-}
-else{
-	res.status(401).send();
-}
-},function(e){
+userInstance=user;
+return db.token.create({
+	token:token
+});
+//if(token)
+//{
+	//res.header('Auth',token).send(user.toPublicJson());
+//}
+//else{
+//	res.status(401).send();
+//}
+}).then(function(tokenInstance){
+res.header('Auth',tokenInstance.get('token')).send(userInstance.toPublicJson());
+}).catch(function(e){
 	res.status(401).send();
 });
 });
